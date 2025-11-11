@@ -29,7 +29,7 @@ type PartnerFormData = {
 export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFormProps) {
   const { addPartner, updatePartner } = usePartners();
 
-  // ملاحظة: نعطي useForm defaultValues فارغة — سنستخدم reset() عند التبديل
+  
   const { register, handleSubmit, reset } = useForm<PartnerFormData>({
     defaultValues: {
       partner_name: "",
@@ -50,7 +50,7 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
     },
   });
 
-  // كلّما تغيّر editingPartner نعمل reset بالقيم المناسبة.
+
   useEffect(() => {
     if (editingPartner) {
       reset({
@@ -74,7 +74,7 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
         },
       });
     } else {
-      // نمرّر object كامل فارغ لضمان تفريغ كل الحقول (بما فيها الـselects)
+      
       reset({
         partner_name: "",
         primary_email: "",
@@ -101,10 +101,10 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
         { id: editingPartner.id, ...data },
         {
           onSuccess: () => {
-            // بعد التحديث نفضي الفورم ونبلّغ الأب ليرجع للحالة الافتراضية
+            
             reset();
             onCancelEdit?.();
-            // بدل alert تقدر تضيف توست لاحقاً
+            
             alert("Partner updated successfully!");
           },
         }
@@ -120,7 +120,7 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
   };
 
   const handleCancel = () => {
-    // نفرّغ الفورم تماماً ونعلم الأب أنّه أوقف التحرير
+    
     reset({
       partner_name: "",
       primary_email: "",
@@ -159,7 +159,7 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
 
       <h3 className="font-semibold mt-4">Customer Details</h3>
 
-      {/* ملاحظة مهمة: لا تضع value={} هنا — دع reset() يضبط القيمة */}
+      
       <select {...register("customer_details.customer_type", { required: true })} className="input">
         <option value="">Select Customer Type</option>
         <option value="Individual">Individual</option>

@@ -28,16 +28,3 @@ export default function Partners() {
     </div>
   );
 }
-
-{/* <PartnerForm
-  editingPartner={editingPartner}
-  onCancelEdit={() => setEditingPartner(null)}
-/>
-
-// بعد: (سطر وحيد مضاف key)
-<PartnerForm
-  key={editingPartner ? `edit-${editingPartner.id}` : "new"}
-  editingPartner={editingPartner}
-  onCancelEdit={() => setEditingPartner(null)}
-/> */}
-

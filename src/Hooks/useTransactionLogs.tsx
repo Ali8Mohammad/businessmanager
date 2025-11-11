@@ -97,7 +97,7 @@ export function useTransactionLogs() {
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["transactionLogs"] }),
   });
-console.log("React Query connected ✅");
+
   return {
     transactionLogsQuery,
     addTransactionLog,
