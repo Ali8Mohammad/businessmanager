@@ -11,8 +11,12 @@ export const useCurrencies = () => {
   const currenciesQuery = useQuery({
     queryKey: CURRENCIES_KEY,
     queryFn: async (): Promise<Currency[]> => {
-      const res = await axiosAPI.get("/currencies");
+      const res = await axiosAPI.get("/currencies?per_page=1000&page=1");
+      console.log("Currencies full page response:", res.data);
       return res.data?.data ?? [];
+      // console.log("Full currencies response:", res.data);
+      // // console.log("Full currencies response:", res.data.data || []);
+      // return res.data?.data || [];
     },
     staleTime: 1000 * 60,
     keepPreviousData: true,

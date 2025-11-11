@@ -12,7 +12,11 @@ export default function Partners() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Business Partners</h1>
 
-      <PartnerForm onAdd={addPartner.mutate} editingPartner={editingPartner} />
+      <PartnerForm
+        key={editingPartner ? `edit-${editingPartner.id}` : "new"} 
+        onAdd={addPartner.mutate}
+        editingPartner={editingPartner}
+        onCancelEdit={() => setEditingPartner(null)} />
 
       <PartnerTable
         partners={partnersQuery.data || []}
