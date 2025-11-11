@@ -1,7 +1,9 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function AppLayout() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -9,29 +11,83 @@ export default function AppLayout() {
   };
 
   return (
-    <div className=" h-screen bg-gray-100">
-      
-      <div className="bg-white shadow-md p-4 flex justify-center align-center flex-col">
-        <nav className="flex justify-between w-full flex-col items-center">
-          <h2 className="text-lg font-bold mb-4">Dashboard</h2>
-          <ul className="space-y-2 flex align-center w-full list-none justify-center gap-2">
-            <li className="px-5">
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      <nav className="bg-white shadow-md w-full">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex justify-between items-center py-4">
+            <h2 className="text-lg font-bold">Dashboard</h2>
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-gray-600 hover:text-black focus:outline-none md:hidden text-2xl"
+            >
+              ☰
+            </button>
+            <ul className="hidden md:flex space-x-4 items-center">
+              <li>
+                <Link
+                  to="/partners"
+                  className="px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+                >
+                  Partners
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/currencies"
+                  className="px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+                >
+                  Currencies
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/channels"
+                  className="px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+                >
+                  Payment Channels
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/transactions"
+                  className="px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+                >
+                  Transaction Logs
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+        {menuOpen && (
+          <ul
+            className="md:hidden flex flex-col space-y-2 px-4 pb-4 animate-slide-down"
+            onClick={() => setMenuOpen(false)}
+          >
+            <li>
               <Link
                 to="/partners"
-                className="block px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+                className="block px-3 py-2 rounded hover:bg-blue-100 transition"
               >
                 Partners
               </Link>
             </li>
-            <li className="px-5">
+            <li>
               <Link
                 to="/currencies"
-                className="block px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+                className="block px-3 py-2 rounded hover:bg-blue-100 transition"
               >
                 Currencies
               </Link>
             </li>
-            <li className="no-underline text-black">
+            <li>
               <Link
                 to="/channels"
                 className="block px-3 py-2 rounded hover:bg-blue-100 transition"
@@ -47,19 +103,20 @@ export default function AppLayout() {
                 Transaction Logs
               </Link>
             </li>
+            <li>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded w-full text-left"
+              >
+                Logout
+              </button>
+            </li>
           </ul>
-        </nav>
+        )}
+      </nav>
 
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white h-10 rounded mt-5 h-max w-max m-auto"
-        >
-          Logout
-        </button>
-      </div>
-
-
-      <main className="flex-1 p-6 overflow-y-auto">
+      
+      <main className="flex-1 p-4 md:p-6 overflow-y-auto">
         <Outlet />
       </main>
     </div>
