@@ -28,29 +28,70 @@ type PartnerFormData = {
 
 export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFormProps) {
   const { addPartner, updatePartner } = usePartners();
-  const { register, handleSubmit, reset } = useForm<PartnerFormData>();
 
+  // ملاحظة: نعطي useForm defaultValues فارغة — سنستخدم reset() عند التبديل
+  const { register, handleSubmit, reset } = useForm<PartnerFormData>({
+    defaultValues: {
+      partner_name: "",
+      primary_email: "",
+      primary_phone_number: "",
+      address: "",
+      default_currency_code: "",
+      notes: "",
+      customer_details: {
+        customer_type: "",
+        payment_term: "",
+        credit_limit: "",
+      },
+      supplier_details: {
+        supplier_type: "",
+        payment_term: "",
+      },
+    },
+  });
+
+  // كلّما تغيّر editingPartner نعمل reset بالقيم المناسبة.
   useEffect(() => {
     if (editingPartner) {
       reset({
-        partner_name: editingPartner.partner_name || "",
-        primary_email: editingPartner.primary_email || "",
-        primary_phone_number: editingPartner.primary_phone_number || "",
-        address: editingPartner.address || "",
-        default_currency_code: editingPartner.default_currency_code || "",
-        notes: editingPartner.notes || "",
+        partner_name: editingPartner.partner_name ?? "",
+        primary_email: editingPartner.primary_email ?? "",
+        primary_phone_number: editingPartner.primary_phone_number ?? "",
+        address: editingPartner.address ?? "",
+        default_currency_code: editingPartner.default_currency_code ?? "",
+        notes: editingPartner.notes ?? "",
         customer_details: {
-          customer_type: editingPartner.customer_details?.customer_type || "",
-          payment_term: editingPartner.customer_details?.payment_term || "",
-          credit_limit: editingPartner.customer_details?.credit_limit?.toString() || "",
+          customer_type: editingPartner.customer_details?.customer_type ?? "",
+          payment_term: editingPartner.customer_details?.payment_term ?? "",
+          credit_limit:
+            editingPartner.customer_details?.credit_limit != null
+              ? String(editingPartner.customer_details.credit_limit)
+              : "",
         },
         supplier_details: {
-          supplier_type: editingPartner.supplier_details?.supplier_type || "",
-          payment_term: editingPartner.supplier_details?.payment_term || "",
+          supplier_type: editingPartner.supplier_details?.supplier_type ?? "",
+          payment_term: editingPartner.supplier_details?.payment_term ?? "",
         },
       });
     } else {
-      reset();
+      // نمرّر object كامل فارغ لضمان تفريغ كل الحقول (بما فيها الـselects)
+      reset({
+        partner_name: "",
+        primary_email: "",
+        primary_phone_number: "",
+        address: "",
+        default_currency_code: "",
+        notes: "",
+        customer_details: {
+          customer_type: "",
+          payment_term: "",
+          credit_limit: "",
+        },
+        supplier_details: {
+          supplier_type: "",
+          payment_term: "",
+        },
+      });
     }
   }, [editingPartner, reset]);
 
@@ -60,20 +101,44 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
         { id: editingPartner.id, ...data },
         {
           onSuccess: () => {
-            alert("Partner updated successfully!");
+            // بعد التحديث نفضي الفورم ونبلّغ الأب ليرجع للحالة الافتراضية
             reset();
             onCancelEdit?.();
+            // بدل alert تقدر تضيف توست لاحقاً
+            alert("Partner updated successfully!");
           },
         }
       );
     } else {
       addPartner.mutate(data, {
         onSuccess: () => {
-          alert("Partner added successfully!");
           reset();
+          alert("Partner added successfully!");
         },
       });
     }
+  };
+
+  const handleCancel = () => {
+    // نفرّغ الفورم تماماً ونعلم الأب أنّه أوقف التحرير
+    reset({
+      partner_name: "",
+      primary_email: "",
+      primary_phone_number: "",
+      address: "",
+      default_currency_code: "",
+      notes: "",
+      customer_details: {
+        customer_type: "",
+        payment_term: "",
+        credit_limit: "",
+      },
+      supplier_details: {
+        supplier_type: "",
+        payment_term: "",
+      },
+    });
+    onCancelEdit?.();
   };
 
   return (
@@ -93,13 +158,44 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
       <textarea {...register("notes")} placeholder="Notes" className="input" />
 
       <h3 className="font-semibold mt-4">Customer Details</h3>
-      <input {...register("customer_details.customer_type", { required: true })} placeholder="Customer Type" className="input" />
-      <input {...register("customer_details.payment_term", { required: true })} placeholder="Payment Term" className="input" />
-      <input {...register("customer_details.credit_limit", { required: true })} placeholder="Credit Limit" className="input" />
+
+      {/* ملاحظة مهمة: لا تضع value={} هنا — دع reset() يضبط القيمة */}
+      <select {...register("customer_details.customer_type", { required: true })} className="input">
+        <option value="">Select Customer Type</option>
+        <option value="Individual">Individual</option>
+        <option value="Corporate">Corporate</option>
+        <option value="TravelAgency">TravelAgency</option>
+      </select>
+
+      <select {...register("customer_details.payment_term", { required: true })} className="input">
+        <option value="">Select Payment Term</option>
+        <option value="Direct">Direct</option>
+        <option value="Credit">Credit</option>
+      </select>
+
+      <input
+        {...register("customer_details.credit_limit", { required: true })}
+        placeholder="Credit Limit"
+        type="number"
+        className="input"
+      />
 
       <h3 className="font-semibold mt-4">Supplier Details</h3>
-      <input {...register("supplier_details.supplier_type", { required: true })} placeholder="Supplier Type" className="input" />
-      <input {...register("supplier_details.payment_term", { required: true })} placeholder="Payment Term" className="input" />
+
+      <select {...register("supplier_details.supplier_type", { required: true })} className="input">
+        <option value="">Select Supplier Type</option>
+        <option value="AirlineProvider">Airline Provider</option>
+        <option value="HotelProvider">Hotel Provider</option>
+        <option value="InsuranceProvider">Insurance Provider</option>
+        <option value="VisaServiceProvider">Visa Service Provider</option>
+        <option value="OtherTravelAgency">Other Travel Agency</option>
+      </select>
+
+      <select {...register("supplier_details.payment_term", { required: true })} className="input">
+        <option value="">Select Supplier Payment Term</option>
+        <option value="Prepaid">Prepaid</option>
+        <option value="Credit">Credit</option>
+      </select>
 
       <div className="flex gap-3 mt-4">
         <button
@@ -112,10 +208,7 @@ export default function PartnerForm({ editingPartner, onCancelEdit }: PartnerFor
         {editingPartner && (
           <button
             type="button"
-            onClick={() => {
-              reset();
-              onCancelEdit?.();
-            }}
+            onClick={handleCancel}
             className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
           >
             Cancel

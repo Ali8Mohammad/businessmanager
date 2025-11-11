@@ -9,12 +9,20 @@ export default function AppLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className=" h-screen bg-gray-100">
       
-      <div className="bg-white shadow-md w-full p-4 flex  justify-center align-center flex-col">
+      <div className="bg-white shadow-md p-4 flex justify-center align-center flex-col">
         <nav className="flex justify-between w-full flex-col items-center">
           <h2 className="text-lg font-bold mb-4">Dashboard</h2>
           <ul className="space-y-2 flex align-center w-full list-none justify-center gap-2">
+            <li className="px-5">
+              <Link
+                to="/partners"
+                className="block px-3 py-2 rounded hover:bg-blue-100 transition text-black no-underline"
+              >
+                Partners
+              </Link>
+            </li>
             <li className="px-5">
               <Link
                 to="/currencies"
@@ -25,7 +33,7 @@ export default function AppLayout() {
             </li>
             <li className="no-underline text-black">
               <Link
-                to="/payment-channels"
+                to="/channels"
                 className="block px-3 py-2 rounded hover:bg-blue-100 transition"
               >
                 Payment Channels
@@ -33,7 +41,7 @@ export default function AppLayout() {
             </li>
             <li>
               <Link
-                to="/transaction-logs"
+                to="/transactions"
                 className="block px-3 py-2 rounded hover:bg-blue-100 transition"
               >
                 Transaction Logs
